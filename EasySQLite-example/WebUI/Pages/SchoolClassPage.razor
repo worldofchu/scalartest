@@ -1,0 +1,146 @@
+﻿@page "/SchoolClass"
+@using Entity
+@using WebUI.Common
+@using WebUI.Services
+@inject HttpClient _httpClient;
+@inject DataLoaderService _dataLoader;
+
+<Table TItem="SchoolClass"
+       AutoGenerateColumns="true"
+       ShowToolbar="true"
+       IsMultipleSelect="true"
+       OnSaveAsync="@OnSaveAsync"
+       OnQueryAsync="@OnQueryAsync"
+       OnDeleteAsync="@OnDeleteAsync"
+       IsStriped="true"
+       IsBordered="true"
+       ShowSearch="true"
+       IsPagination="true"
+       ShowSearchText="true">
+
+    <TableColumns>
+        <TableColumn Sortable="true" Filterable="true" Searchable="true" @bind-Field="@context.ClassName" PlaceHolder="请输入班级名称" Required="true" />
+        <TableColumn @bind-Field="@context.ClassID" IsVisibleWhenAdd="false" IsVisibleWhenEdit="false" />
+        <TableColumn @bind-Field="@context.CreateTime" FormatString="yyyy-MM-dd HH:mm:ss" />
+    </TableColumns>
+
+    <SearchTemplate>
+        <GroupBox Title="搜索条件">
+            <div class="row g-3 form-inline">
+                <div class="col-12 col-sm-6">
+                    <BootstrapInput @bind-Value="@context.ClassName" PlaceHolder="请输入班级名称" maxlength="50" ShowLabel="true" DisplayText="姓名" />
+                </div>
+            </div>
+        </GroupBox>
+    </SearchTemplate>
+</Table>
+
+@code {
+    /// <summary>
+    /// 数据查询
+    /// </summary>
+    /// <param name="options">options</param>
+    /// <returns></returns>
+    private async Task<QueryData<SchoolClass>> OnQueryAsync(QueryPageOptions options)
+    {
+        var searchModel = options.SearchModel as SchoolClass;
+        var getClass = new List<SchoolClass>();
+        var getResults = await _httpClient.GetFromJsonAsync<ApiResponse<List<SchoolClass>>>("api/SchoolClass/GetAllClass").ConfigureAwait(false);
+        if (getResults.Success)
+        {
+            // 数据模糊过滤筛选
+            if (!string.IsNullOrWhiteSpace(options.SearchText))
+            {
+                getClass = getResults.Data.Where(x => x.ClassName.Contains(options.SearchText)).ToList();
+            }
+            else if (searchModel != null && !string.IsNullOrWhiteSpace(searchModel.ClassName))
+            {
+                getClass = getResults.Data.Where(x => x.ClassName.Contains(searchModel.ClassName)).ToList();
+            }
+            else
+            {
+                getClass = getResults.Data.ToList();
+            }
+        }
+
+        // 内存分页
+        return await Task.FromResult(new QueryData<SchoolClass>()
+            {
+                Items = getClass.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList(),
+                TotalCount = getClass.Count()
+            });
+    }
+
+    /// <summary>
+    /// 模拟数据增加和修改操作
+    /// </summary>
+    /// <param name="studentInfo">studentInfo</param>
+    /// <param name="changedType">changedType</param>
+    /// <returns></returns>
+    public async Task<bool> OnSaveAsync(SchoolClass studentInfo, ItemChangedType changedType)
+    {
+        if (string.IsNullOrWhiteSpace(studentInfo.ClassName))
+        {
+            return await Task.FromResult(false);
+        }
+
+        if (changedType.ToString() == "Update")
+        {
+            var addResult = await _httpClient.PutAsJsonAsync($"api/SchoolClass/UpdateClass/{studentInfo.ClassID}", studentInfo).ConfigureAwait(false);
+            if (UtilityBusiness.CheckResponse(addResult))
+            {
+                //加载班级信息
+                await _dataLoader.LoadSchoolClassDataAsync().ConfigureAwait(false);
+                return await Task.FromResult(true);
+            }
+            else
+            {
+                return await Task.FromResult(false);
+            }
+        }
+        else if (changedType.ToString() == "Add")
+        {
+            var addResult = await _httpClient.PostAsJsonAsync("api/SchoolClass/CreateClass", studentInfo).ConfigureAwait(false);
+            if (UtilityBusiness.CheckResponse(addResult))
+            {
+                //加载班级信息
+                await _dataLoader.LoadSchoolClassDataAsync().ConfigureAwait(false);
+                return await Task.FromResult(true);
+            }
+            else
+            {
+                return await Task.FromResult(false);
+            }
+        }
+
+        return await Task.FromResult(true);
+    }
+
+    /// <summary>
+    /// 数据删除
+    /// </summary>
+    /// <param name="items">items</param>
+    /// <returns></returns>
+    private async Task<bool> OnDeleteAsync(IEnumerable<SchoolClass> items)
+    {
+        var deleteSuccessNum = 0;
+        var schoolClassList = items.ToList();
+        foreach (var item in schoolClassList)
+        {
+            var delResult = await _httpClient.DeleteAsync($"api/SchoolClass/DeleteClass/{item.ClassID}").ConfigureAwait(false);
+            if (UtilityBusiness.CheckResponse(delResult))
+            {
+                deleteSuccessNum++;
+            }
+        }
+
+        if (deleteSuccessNum > 0)
+        {
+            return await Task.FromResult(true);
+        }
+        else
+        {
+            return await Task.FromResult(false);
+        }
+    }
+}
