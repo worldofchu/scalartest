@@ -64,6 +64,8 @@ namespace WebApi.Controllers
         /// <summary>
         /// 获取所有班级信息
         /// </summary>
+        [EndpointSummary("This is a 获取所有班级信息.")]
+        [EndpointDescription("获取所有班级信息.")]
         [HttpGet]
         public async Task<ApiResponse<List<SchoolClass>>> GetAllClass()
         {

@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebApi</name>
+    </assembly>
+    <members>
+        <member name="T:WebApi.AutoMapperMappingProfile">
+            <summary>
+            AutoMapper映射配置文件
+            </summary>
+        </member>
+        <member name="M:WebApi.AutoMapperMappingProfile.#ctor">
+            <summary>
+            添加映射规则
+            </summary>
+        </member>
+        <member name="T:WebApi.Controllers.SchoolClassController">
+            <summary>
+            学校班级管理
+            </summary>
+        </member>
+        <member name="M:WebApi.Controllers.SchoolClassController.#ctor(Utility.SQLiteAsyncHelper{Entity.SchoolClass})">
+            <summary>
+            依赖注入
+            </summary>
+            <param name="schoolClassHelper">schoolClassHelper</param>
+        </member>
+        <member name="M:WebApi.Controllers.SchoolClassController.CreateClass(Entity.SchoolClass)">
+            <summary>
+            班级创建
+            </summary>
+            <param name="schoolClass">创建班级信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.SchoolClassController.GetAllClass">
+            <summary>
+            获取所有班级信息
+            </summary>
+        </member>
+        <member name="M:WebApi.Controllers.SchoolClassController.GetClass(System.Int32)">
+            <summary>
+            根据班级ID获取班级信息
+            </summary>
+            <param name="classId">班级ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.SchoolClassController.UpdateClass(System.Int32,Entity.SchoolClass)">
+            <summary>
+            更新班级信息
+            </summary>
+            <param name="classId">班级ID</param>
+            <param name="updatedClass">更新的班级信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.SchoolClassController.DeleteClass(System.Int32)">
+            <summary>
+            班级删除
+            </summary>
+            <param name="classId">班级ID</param>
+            <returns></returns>
+        </member>
+        <member name="T:WebApi.Controllers.StudentController">
+            <summary>
+            学生管理
+            </summary>
+        </member>
+        <member name="M:WebApi.Controllers.StudentController.#ctor(AutoMapper.IMapper,Utility.SQLiteAsyncHelper{Entity.Student},Utility.SQLiteAsyncHelper{Entity.SchoolClass})">
+            <summary>
+            依赖注入
+            </summary>
+            <param name="mapper">mapper</param>
+            <param name="studentHelper">studentHelper</param>
+            <param name="schoolClassHelper">schoolClassHelper</param>
+        </member>
+        <member name="M:WebApi.Controllers.StudentController.CreateStudent(Entity.Student)">
+            <summary>
+            创建新的学生记录
+            </summary>
+            <param name="student">添加的学生信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.StudentController.GetAllStudent">
+            <summary>
+            查询所有学生记录
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.StudentController.GetStudentById(System.Int32)">
+            <summary>
+            根据学生ID查询学生信息
+            </summary>
+            <param name="studentID">学生ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.StudentController.UpdateStudent(System.Int32,Entity.Student)">
+            <summary>
+            更新学生记录
+            </summary>
+            <param name="studentID">学生ID</param>
+            <param name="editstudent">更新的学生信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.StudentController.DeleteStudent(System.Int32)">
+            <summary>
+            删除学生记录
+            </summary>
+            <param name="studentID">学生ID</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
